@@ -3,7 +3,7 @@ import './App.css';
 import Web3 from 'web3';
 import dawnAbi from './abis/dawn';
 import cBAT from './abis/cBAT';
-
+import Button from '@material-ui/core/Button';
 
 function App() {
   const [address, setAddress] = useState('');
@@ -30,6 +30,10 @@ function App() {
       {/* {isConnected} */}
       
       {window.ethereum && <p>Your Ethereum address is: {contractAddress} {totalSupply}, </p>}
+
+      <Button variant="contained" color="primary">
+        Verify that material ui is working
+      </Button> 
     </div>
   );
 }
