@@ -6,7 +6,7 @@ import cBAT from './abis/cBAT';
 import { FormControl } from '@material-ui/core';
 import  SearchAppBar from './components/header';
 import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
-import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal'
+import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal';
 
 function App() {
   const [address, setAddress] = useState('');
@@ -17,7 +17,6 @@ function App() {
   useEffect( async () => {
     let web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
     const contract = new web3.eth.Contract(cBAT, cBatAddress);
-    console.log(contract.methods)
     let supply = await contract.methods.totalSupply().call();
     setTotalSupply(supply);
   });
