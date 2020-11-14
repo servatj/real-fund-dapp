@@ -19,18 +19,22 @@ function App() {
     let supply = await contract.methods.totalSupply().call();
     setTotalSupply(supply);
   });
- 
-  window.ethereum.on('accountsChanged', function (accounts) {
-    const account = accounts[0];
-    // do something with new account here
-    setAddress(account)
-  })
 
+  if(window.ethereum) {
+    window.ethereum.on('accountsChanged', function (accounts) {
+      const account = accounts[0];
+      // do something with new account here
+      setAddress(account)
+    })
+  }
+ 
   return (
     <div className="App">
       <SearchAppBar />
       {/* {isConnected} */}
       
+
+      {!window.ethereum && <h1>Please connect a wallet !</h1>}
       {window.ethereum && <p>Your Ethereum address is: {contractAddress} {totalSupply}, </p>}
 
 
