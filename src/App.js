@@ -3,7 +3,8 @@ import './App.css';
 import Web3 from 'web3';
 import dawnAbi from './abis/dawn';
 import cBAT from './abis/cBAT';
-import Button from '@material-ui/core/Button';
+import { FormControl } from '@material-ui/core';
+import  SearchAppBar from './components/header';
 
 function App() {
   const [address, setAddress] = useState('');
@@ -27,13 +28,17 @@ function App() {
 
   return (
     <div className="App">
+      <SearchAppBar />
       {/* {isConnected} */}
       
       {window.ethereum && <p>Your Ethereum address is: {contractAddress} {totalSupply}, </p>}
 
-      <Button variant="contained" color="primary">
-        Verify that material ui is working
-      </Button> 
+
+      {/* <FormControl>
+        <InputLabel htmlFor="my-input">Email address</InputLabel>
+        <Input id="my-input" aria-describedby="my-helper-text" />
+        <FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>
+      </FormControl> */}
     </div>
   );
 }
