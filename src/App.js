@@ -5,6 +5,8 @@ import dawnAbi from './abis/dawn';
 import cBAT from './abis/cBAT';
 import { FormControl } from '@material-ui/core';
 import  SearchAppBar from './components/header';
+import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
+import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal'
 
 function App() {
   const [address, setAddress] = useState('');
