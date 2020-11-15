@@ -1,14 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
 import WalletButton from './WalletButton';
 import logo from '../logo.jpg';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -70,7 +69,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchAppBar() {
+export default function SearchAppBar({ provider, setProvider, loadWeb3Modal }) {
   const classes = useStyles();
 
   return (
@@ -82,7 +81,7 @@ export default function SearchAppBar() {
             Realstate Tokenization
           </Typography>
           <div className={classes.search}>
-            <WalletButton />
+            <WalletButton provider={provider} loadWeb3Modal={loadWeb3Modal} setProvider={setProvider} />
           </div>
         </Toolbar>
       </AppBar>
