@@ -8,7 +8,6 @@ import { fade, makeStyles } from '@material-ui/core/styles';
 import WalletButton from './WalletButton';
 import logo from '../logo.jpg';
 
-
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,

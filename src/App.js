@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import Button from '@material-ui/core/Button'
 import './App.css';
 import Web3 from 'web3';
-import dawnAbi from './abis/dawn';
-import cBAT from './abis/cBAT';
-import { FormControl, InputLabel, Input, FormHelperText } from '@material-ui/core';
+import { FormControl, InputLabel, Input, FormHelperText, TextField } from '@material-ui/core';
 import  SearchAppBar from './components/header';
 import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
-import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal'
+import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal';
+import { makeStyles } from '@material-ui/core/styles';
 
 async function readOnChainData() {
 
@@ -14,12 +14,56 @@ async function readOnChainData() {
 
 }
 
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    width: 'auto',
+    marginLeft: theme.spacing(3),
+    marginRight: theme.spacing(3),
+    [theme.breakpoints.up(620 + theme.spacing(6))]: {
+      width: 400,
+      marginLeft: 'auto',
+      marginRight: 'auto',
+    },
+    marginTop: theme.spacing(8),
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    padding: `${theme.spacing(2)}px ${theme.spacing(3)}px ${theme.spacing(
+      3
+    )}px`,
+  },
+  avatar: {
+    margin: theme.spacing(1),
+    width: 192,
+    height: 192,
+    color: theme.palette.secondary.main,
+  },
+  form: {
+    marginTop: theme.spacing(1),
+  },
+  submit: {
+    margin: theme.spacing(3, 0, 2),
+  },
+  container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: `100%`,
+  },
+}))
+
 function App() {
+  const classes = useStyles()
+  // hooks 
   const [address, setAddress] = useState('');
   const [totalSupply, setTotalSupply] = useState(0);
   const [provider, setProvider] = useState();
   const [userAddress, setUserAddress] = useState();
   const [userBalance, setBalance] = useState(0);
+  const [tokenBalance, setTokenBalance] = useState('')
+  const [tokenBalanceSwap, setTotalBalanceSwap] = useState('')
+  
 
 
   async function getBalances(web3) {
@@ -78,10 +122,45 @@ function App() {
       {window.ethereum && <p>Your Ethereum address is: {userAddress} {userBalance}, </p>}
 
       <FormControl>
-        <InputLabel htmlFor="my-input">Email address</InputLabel>
-        <Input id="my-input" aria-describedby="my-helper-text" />
-        <FormHelperText id="my-helper-text">We'll never share your email.</FormHelperText>
+          <TextField
+              value={userBalance}
+              onInput={(e) => setTokenBalance(e.target.value)}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              id="username"
+              label='username'
+              name="username"
+              autoComplete="username"
+              autoFocus
+            />
+            <TextField
+              value={userBalance}
+            //  onInput={(e) => setPassword(e.target.value)}
+              variant="outlined"
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label='label'
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              className={classes.submit}
+            >
+              Swap
+            </Button>
       </FormControl>
+
+
+
     </div>
   );
 }
