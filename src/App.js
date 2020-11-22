@@ -1,20 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import Button from '@material-ui/core/Button'
 import './App.css';
-import Web3 from 'web3';
+import Web3, { eth } from 'web3';
 import { FormControl, FormLabel, InputLabel, Input, FormHelperText, TextField } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper'
 import  SearchAppBar from './components/header';
 import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
 import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal';
 import { makeStyles } from '@material-ui/core/styles';
-
-const swap = (amount)  => {
-
-  // empty function for later protocols
-  alert(`swap ${amount}`)
-
-}
+import { abi } from './abis/RealFundSwap.json';
+import NumberFormat from 'react-number-format';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -40,6 +35,10 @@ const useStyles = makeStyles((theme) => ({
     height: 192,
     color: theme.palette.secondary.main,
   },
+  display: {
+    background: '#1abc9c',
+    color: 'white'
+  },
   form: {
     marginTop: theme.spacing(1),
   },
@@ -63,13 +62,18 @@ function App() {
   const [provider, setProvider] = useState();
   const [userAddress, setUserAddress] = useState();
   const [userBalance, setBalance] = useState(0);
-  const [tokenBalance, setTokenBalance] = useState('')
-  const [tokenBalanceSwap, setTotalBalanceSwap] = useState('')
+  const [tokenBalance, setTokenBalance] = useState('');
+  const [tokenBalanceSwap, setTotalBalanceSwap] = useState('');
+  const [web3Lib, setWeb3] = useState('');
+
   
-  async function getBalances(web3) {
-    const accounts = await web3.eth.getAccounts()
-    console.log(accounts[0])
+  const swap = async (amount)  => {
+    const realFundContract = '0x8a7234F12a67B4972cB85787FE0224187a902413';
+    var contract = new web3Lib.eth.Contract(abi, realFundContract);
+    await contract.methods.swapRealfundForDai(web3Lib.utils.toWei(amount)).call();
+    console.log('swap');
   }
+  
 
   /* Open wallet selection modal. */
   const loadWeb3Modal = useCallback(async () => {
@@ -80,6 +84,7 @@ function App() {
     setProvider(new Web3Provider(newProvider));
     setUserAddress(currentAddress[0]);
     setBalance(balance);
+    setWeb3(web3);
   }, []);
 
   /* If user has loaded a wallet before, load it automatically. */
@@ -119,11 +124,12 @@ function App() {
       <Paper className={classes.paper} elevation={6}> 
         <div className={classes.container}>
           <FormControl>
-              <TextField
+              <NumberFormat
                   value={tokenBalance}
-                  onInput={(e) => setTokenBalance(e.target.value)}
+                  onInput={(e) => setTokenBalance(`${e.target.value}`)}
                   variant="outlined"
                   margin="normal"
+                 // customInput={TextField}
                   required
                   fullWidth
                   id="amountBase"
@@ -132,8 +138,22 @@ function App() {
                   autoComplete="amountBase"
                   autoFocus
                 />
+
+    {/* <NumberFormat
+      {...props}
+      value={value}
+      name={name}
+      mask={mask}
+      customInput={TextField}
+      prefix={'$'}
+      format={format || null}
+      type="text"
+      thousandSeparator={thousandSeparator ? ' ' : null}
+      onValueChange={({ value: v }) => onChange({ target: { name, value: v } })}
+    /> */}
                 <TextField
-                  value={userBalance}
+                  className={classes.display}
+                  value={`${userBalance} RFD`}
                   disabled={true}
                   variant="outlined"
                   margin="normal"

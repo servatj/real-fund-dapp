@@ -25,9 +25,7 @@ const WalletButton = ({ provider, setProvider, setUserAddress, setBalance }) => 
     });
 
     setProvider(new Web3Provider(newProvider));
-
   }, []);
-  
   
   const loadLogoutWeb3 = (provider) => {
     console.log('load', provider)

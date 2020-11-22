@@ -89,9 +89,7 @@
   "ast": {
     "absolutePath": "/home/servatj/os/real-fund-smartpool/contracts/realfundBalancer/RealFundSwap.sol",
     "exportedSymbols": {
-      "RealFundSwap": [
-        752
-      ]
+      "RealFundSwap": [752]
     },
     "id": 753,
     "license": "GPL-3.0-or-later",
@@ -99,20 +97,13 @@
     "nodes": [
       {
         "id": 629,
-        "literals": [
-          "solidity",
-          "0.6",
-          ".12"
-        ],
+        "literals": ["solidity", "0.6", ".12"],
         "nodeType": "PragmaDirective",
         "src": "45:23:6"
       },
       {
         "id": 630,
-        "literals": [
-          "experimental",
-          "ABIEncoderV2"
-        ],
+        "literals": ["experimental", "ABIEncoderV2"],
         "nodeType": "PragmaDirective",
         "src": "112:33:6"
       },
@@ -146,9 +137,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 752,
-        "linearizedBaseContracts": [
-          752
-        ],
+        "linearizedBaseContracts": [752],
         "name": "RealFundSwap",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -544,9 +533,7 @@
               "src": "556:275:6",
               "statements": [
                 {
-                  "assignments": [
-                    668
-                  ],
+                  "assignments": [668],
                   "declarations": [
                     {
                       "constant": false,
@@ -739,9 +726,7 @@
                   "src": "566:60:6"
                 },
                 {
-                  "assignments": [
-                    680
-                  ],
+                  "assignments": [680],
                   "declarations": [
                     {
                       "constant": false,
@@ -1796,9 +1781,7 @@
   "legacyAST": {
     "absolutePath": "/home/servatj/os/real-fund-smartpool/contracts/realfundBalancer/RealFundSwap.sol",
     "exportedSymbols": {
-      "RealFundSwap": [
-        752
-      ]
+      "RealFundSwap": [752]
     },
     "id": 753,
     "license": "GPL-3.0-or-later",
@@ -1806,20 +1789,13 @@
     "nodes": [
       {
         "id": 629,
-        "literals": [
-          "solidity",
-          "0.6",
-          ".12"
-        ],
+        "literals": ["solidity", "0.6", ".12"],
         "nodeType": "PragmaDirective",
         "src": "45:23:6"
       },
       {
         "id": 630,
-        "literals": [
-          "experimental",
-          "ABIEncoderV2"
-        ],
+        "literals": ["experimental", "ABIEncoderV2"],
         "nodeType": "PragmaDirective",
         "src": "112:33:6"
       },
@@ -1853,9 +1829,7 @@
         "documentation": null,
         "fullyImplemented": true,
         "id": 752,
-        "linearizedBaseContracts": [
-          752
-        ],
+        "linearizedBaseContracts": [752],
         "name": "RealFundSwap",
         "nodeType": "ContractDefinition",
         "nodes": [
@@ -2251,9 +2225,7 @@
               "src": "556:275:6",
               "statements": [
                 {
-                  "assignments": [
-                    668
-                  ],
+                  "assignments": [668],
                   "declarations": [
                     {
                       "constant": false,
@@ -2446,9 +2418,7 @@
                   "src": "566:60:6"
                 },
                 {
-                  "assignments": [
-                    680
-                  ],
+                  "assignments": [680],
                   "declarations": [
                     {
                       "constant": false,
