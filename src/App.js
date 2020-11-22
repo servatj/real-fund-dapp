@@ -2,15 +2,17 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Button from '@material-ui/core/Button'
 import './App.css';
 import Web3 from 'web3';
-import { FormControl, InputLabel, Input, FormHelperText, TextField } from '@material-ui/core';
+import { FormControl, FormLabel, InputLabel, Input, FormHelperText, TextField } from '@material-ui/core';
+import Paper from '@material-ui/core/Paper'
 import  SearchAppBar from './components/header';
 import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
 import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal';
 import { makeStyles } from '@material-ui/core/styles';
 
-async function readOnChainData() {
+const swap = (amount)  => {
 
   // empty function for later protocols
+  alert(`swap ${amount}`)
 
 }
 
@@ -64,8 +66,6 @@ function App() {
   const [tokenBalance, setTokenBalance] = useState('')
   const [tokenBalanceSwap, setTotalBalanceSwap] = useState('')
   
-
-
   async function getBalances(web3) {
     const accounts = await web3.eth.getAccounts()
     console.log(accounts[0])
@@ -74,93 +74,87 @@ function App() {
   /* Open wallet selection modal. */
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
+    let web3 = new Web3(window.ethereum);
+    let currentAddress = await web3.eth.getAccounts();
+    let balance = await web3.eth.getBalance(currentAddress[0]);
     setProvider(new Web3Provider(newProvider));
+    setUserAddress(currentAddress[0]);
+    setBalance(balance);
   }, []);
 
   /* If user has loaded a wallet before, load it automatically. */
-  useEffect(() => {
+  useEffect( async () => {
+    console.log('effect')
     if (web3Modal.cachedProvider) {
       loadWeb3Modal();
+    } else {
+      if(provider) {
+        console.log(' provider ')
+        let web3 = new Web3(window.ethereum);
+       // console.log('is connected', web3.isConnected());
+        console.log('address', await web3.eth.getAccounts());  
+        setUserAddress(await web3.eth.getAccounts()[0]);
+  
+        if (userAddress) {
+          const balance = await web3.eth.getBalance(userAddress);
+          setBalance(balance);
+        }
+      }
     }
   }, [loadWeb3Modal]);
 
-
-  const contractAddress = '0x580c8520dEDA0a441522AEAe0f9F7A5f29629aFa';
-
-  useEffect( async () => {
-    if(provider) {
-      console.log(provider)
-      let web3 = new Web3(window.ethereum);
-     // console.log('is connected', web3.isConnected());
-      console.log('address', userAddress);  
-      web3.eth.getAccounts(console.log);
-
-      if (userAddress) {
-        const balance = await web3.eth.getBalance(userAddress);
-        setBalance(balance);
-      }
-    }
-  });
-
-  // if(window.ethereum) {
-  //   window.ethereum.on('accountsChanged', function (accounts) {
-  //     const account = accounts[0];
-  //     // do something with new account here
-  //     setAddress(account)
-  //   })
-  // }
-  
   return (
     <div className="App">
       <SearchAppBar 
         provider={provider} 
-        loadWeb3Modal={loadWeb3Modal} setProvider={setProvider}  setUserAddress={setUserAddress}/>
+        loadWeb3Modal={loadWeb3Modal} 
+        setProvider={setProvider}  
+        setUserAddress={setUserAddress}
+        setBalance={setBalance}/>
       {/* {isConnected} */}
       
 
       {!window.ethereum && <h1>Please connect a wallet !</h1>}
       {window.ethereum && <p>Your Ethereum address is: {userAddress} {userBalance}, </p>}
-
-      <FormControl>
-          <TextField
-              value={userBalance}
-              onInput={(e) => setTokenBalance(e.target.value)}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="username"
-              label='username'
-              name="username"
-              autoComplete="username"
-              autoFocus
-            />
-            <TextField
-              value={userBalance}
-            //  onInput={(e) => setPassword(e.target.value)}
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label='label'
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Swap
-            </Button>
-      </FormControl>
-
-
-
+      <Paper className={classes.paper} elevation={6}> 
+        <div className={classes.container}>
+          <FormControl>
+              <TextField
+                  value={tokenBalance}
+                  onInput={(e) => setTokenBalance(e.target.value)}
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  id="amountBase"
+                  label='amount'
+                  name="amountBase"
+                  autoComplete="amountBase"
+                  autoFocus
+                />
+                <TextField
+                  value={userBalance}
+                  disabled={true}
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="amountQuote"
+                  id="amountQuote"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => swap(tokenBalance)}
+                  className={classes.submit}
+                >
+                  Swap
+                </Button>
+          </FormControl> 
+        </div>
+      </Paper>
     </div>
   );
 }

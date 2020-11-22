@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SearchAppBar({ provider, setProvider, loadWeb3Modal, setUserAddress }) {
+export default function SearchAppBar({ provider, setProvider, loadWeb3Modal, setUserAddress, setBalance }) {
   const classes = useStyles();
 
   return (
@@ -80,7 +80,7 @@ export default function SearchAppBar({ provider, setProvider, loadWeb3Modal, set
             Realstate Tokenization
           </Typography>
           <div className={classes.search}>
-            <WalletButton provider={provider} loadWeb3Modal={loadWeb3Modal} setProvider={setProvider} setUserAddress={setUserAddress}/>
+            <WalletButton provider={provider} loadWeb3Modal={loadWeb3Modal} setProvider={setProvider} setUserAddress={setUserAddress} setBalance={setBalance}/>
           </div>
         </Toolbar>
       </AppBar>
