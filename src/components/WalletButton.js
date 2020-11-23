@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import Button from '@material-ui/core/Button';
-import { web3Modal, logoutOfWeb3Modal } from '../utils/web3Modal';
+import { web3Modal, logoutOfWeb3Modal, shortenAddress } from '../utils/web3Modal';
 import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
 import Web3 from 'web3';
 
-const WalletButton = ({ provider, setProvider, setUserAddress, setBalance }) => {
+const WalletButton = ({ provider, setProvider, setUserAddress, setBalance, setWeb3 }) => {
 
   const loadWeb3Modal = useCallback(async () => {
     const newProvider = await web3Modal.connect();
@@ -14,6 +14,7 @@ const WalletButton = ({ provider, setProvider, setUserAddress, setBalance }) => 
     setProvider(new Web3Provider(newProvider));
     setUserAddress(currentAddress[0]);
     setBalance(balance);
+    setWeb3(web3);
 
     newProvider.on("accountsChanged", accounts => {
       console.log("accountsChanged", accounts);

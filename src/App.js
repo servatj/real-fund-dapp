@@ -6,7 +6,7 @@ import { FormControl, FormLabel, InputLabel, Input, FormHelperText, TextField } 
 import Paper from '@material-ui/core/Paper'
 import  SearchAppBar from './components/header';
 import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
-import { web3Modal, logoutOfWeb3Modal } from './utils/web3Modal';
+import { web3Modal, logoutOfWeb3Modal, shortenAddress } from './utils/web3Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import { abi } from './abis/RealFundSwap.json';
 import NumberFormat from 'react-number-format';
@@ -39,6 +39,9 @@ const useStyles = makeStyles((theme) => ({
     background: '#1abc9c',
     color: 'white'
   },
+  input: {
+    color: 'white'
+  },
   form: {
     marginTop: theme.spacing(1),
   },
@@ -60,7 +63,7 @@ function App() {
   const [address, setAddress] = useState('');
   const [totalSupply, setTotalSupply] = useState(0);
   const [provider, setProvider] = useState();
-  const [userAddress, setUserAddress] = useState();
+  const [userAddress, setUserAddress] = useState('');
   const [userBalance, setBalance] = useState(0);
   const [tokenBalance, setTokenBalance] = useState('');
   const [tokenBalanceSwap, setTotalBalanceSwap] = useState('');
@@ -69,9 +72,9 @@ function App() {
   
   const swap = async (amount)  => {
     const realFundContract = '0x8a7234F12a67B4972cB85787FE0224187a902413';
-    var contract = new web3Lib.eth.Contract(abi, realFundContract);
-    await contract.methods.swapRealfundForDai(web3Lib.utils.toWei(amount)).call();
-    console.log('swap');
+    const contract = new web3Lib.eth.Contract(abi, realFundContract);
+    const result = await contract.methods.swapRealfundForDai(web3Lib.utils.toWei(amount)).call();
+    console.log('swap', result);
   }
   
 
@@ -81,6 +84,7 @@ function App() {
     let web3 = new Web3(window.ethereum);
     let currentAddress = await web3.eth.getAccounts();
     let balance = await web3.eth.getBalance(currentAddress[0]);
+    //const formatAddress = `${currentAddress[0].substring(0, 4 + 2)}...${currentAddress[0].substring(42 - 4)}`
     setProvider(new Web3Provider(newProvider));
     setUserAddress(currentAddress[0]);
     setBalance(balance);
@@ -115,16 +119,18 @@ function App() {
         loadWeb3Modal={loadWeb3Modal} 
         setProvider={setProvider}  
         setUserAddress={setUserAddress}
-        setBalance={setBalance}/>
+        setBalance={setBalance}
+        setWeb3={setWeb3}
+      />
       {/* {isConnected} */}
       
 
       {!window.ethereum && <h1>Please connect a wallet !</h1>}
-      {window.ethereum && <p>Your Ethereum address is: {userAddress} {userBalance}, </p>}
+      {window.ethereum && <p>Your Ethereum address is: {shortenAddress(userAddress)} {userBalance}, </p>}
       <Paper className={classes.paper} elevation={6}> 
         <div className={classes.container}>
           <FormControl>
-              <NumberFormat
+              <TextField
                   value={tokenBalance}
                   onInput={(e) => setTokenBalance(`${e.target.value}`)}
                   variant="outlined"
@@ -138,19 +144,6 @@ function App() {
                   autoComplete="amountBase"
                   autoFocus
                 />
-
-    {/* <NumberFormat
-      {...props}
-      value={value}
-      name={name}
-      mask={mask}
-      customInput={TextField}
-      prefix={'$'}
-      format={format || null}
-      type="text"
-      thousandSeparator={thousandSeparator ? ' ' : null}
-      onValueChange={({ value: v }) => onChange({ target: { name, value: v } })}
-    /> */}
                 <TextField
                   className={classes.display}
                   value={`${userBalance} RFD`}
@@ -161,6 +154,11 @@ function App() {
                   fullWidth
                   name="amountQuote"
                   id="amountQuote"
+                  InputProps={{
+                    classes: {
+                      input: classes.input,
+                    },
+                  }}
                 />
                 <Button
                   type="submit"

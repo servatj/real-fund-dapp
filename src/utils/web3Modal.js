@@ -24,3 +24,7 @@ export const logoutOfWeb3Modal = async function() {
   await web3Modal.clearCachedProvider();
   window.location.reload();
 };
+
+export const shortenAddress = (currentAddress) => {
+  return `${currentAddress.substring(0, 4 + 2)}...${currentAddress.substring(42 - 4)}`
+}
