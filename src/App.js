@@ -126,7 +126,7 @@ function App() {
       
 
       {!window.ethereum && <h1>Please connect a wallet !</h1>}
-      {window.ethereum && <p>Your Ethereum address is: {shortenAddress(userAddress)} {userBalance}, </p>}
+      {window.ethereum && <p>Your Ethereum address is: {shortenAddress(userAddress)} { Web3.utils.fromWei(`${userBalance}`, "ether") }, </p>}
       <Paper className={classes.paper} elevation={6}> 
         <div className={classes.container}>
           <FormControl>
