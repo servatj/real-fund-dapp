@@ -13,8 +13,6 @@ import daiToken from './abis/DaiToken.json';
 import realFundToken from './abis/RealFundTokenERC20.json';
 import Typography from '@material-ui/core/Typography';
 
-import { TokenProvider, useToken } from './context/TokenContext';
-
 const useStyles = makeStyles((theme) => ({
   paper: {
     width: 'auto',
@@ -73,8 +71,6 @@ const userWhiteList = [];
 function App() {
   const classes = useStyles()
   // hooks 
-  const [address, setAddress] = useState('');
-  const [totalSupply, setTotalSupply] = useState(0);
   const [provider, setProvider] = useState();
   const [userAddress, setUserAddress] = useState('');
   const [userBalance, setBalance] = useState(1);
@@ -82,15 +78,14 @@ function App() {
   const [userRFD, setRFD] = useState(0);
   const [userSpotPrice, setSpotPrice] = useState(0);
   const [tokenBalance, setTokenBalance] = useState(1);  
-  const [tokenBalanceSwap, setTotalBalanceSwap] = useState('');
   const [web3Lib, setWeb3] = useState('');
   const [approved, setApproved] = useState(false);
   const [approvedDai, setApprovedDai] = useState(false);
   const [tokenDaiBalance, setTokenDaiBalance] = useState(1);  
   const [userDaiSpotPrice, setDaiSpotPrice] = useState(0);
   const [whiteListAddress, setWhiteListAddress] = useState('');
-  const [displayPrice, setDisplayPrice] = useState(userDaiSpotPrice);
-  const [displayDaiPrice, setDisplayDaiPrice] = useState(userDaiSpotPrice);
+  // const [displayPrice, setDisplayPrice] = useState(userDaiSpotPrice);
+  // const [displayDaiPrice, setDisplayDaiPrice] = useState(userDaiSpotPrice);
 
 
   
@@ -121,7 +116,7 @@ function App() {
     console.log('Realfund / Dai price->', web3Lib.utils.fromWei(userSpotPrice.toString(), 'ether'));
     console.log('token ', tokenBalance, priceWithSlippage, userSpotPrice,  userSpotPrice * tokenBalance)
 
-    const swapResult = await contract.methods.swapExactAmountIn(config.realFundToken, web3Lib.utils.toWei(`${tokenBalance}`), config.daiContract, web3Lib.utils.toWei('0'), web3Lib.utils.toWei(priceWithSlippage)).send({from: userAddress });
+    await contract.methods.swapExactAmountIn(config.realFundToken, web3Lib.utils.toWei(`${tokenBalance}`), config.daiContract, web3Lib.utils.toWei('0'), web3Lib.utils.toWei(priceWithSlippage)).send({from: userAddress });
     const price = await contract.methods.getSpotPrice(config.daiContract, config.realFundToken).call();
     console.log('spot price', price)
     console.log('Realfund / Dai new price->', web3Lib.utils.fromWei(price.toString(), 'ether'));
@@ -138,7 +133,7 @@ function App() {
     console.log('Dai price / Realfund ->', web3Lib.utils.fromWei(userDaiSpotPrice.toString(), 'ether'));
     console.log('token ', tokenDaiBalance, priceWithSlippage, userDaiSpotPrice,  userDaiSpotPrice * tokenDaiBalance)
 
-    const swapResult = await contract.methods.swapExactAmountIn(config.daiContract, web3Lib.utils.toWei(`${tokenDaiBalance}`), config.realFundToken, web3Lib.utils.toWei('0'), web3Lib.utils.toWei(priceWithSlippage)).send({from: userAddress });
+    await contract.methods.swapExactAmountIn(config.daiContract, web3Lib.utils.toWei(`${tokenDaiBalance}`), config.realFundToken, web3Lib.utils.toWei('0'), web3Lib.utils.toWei(priceWithSlippage)).send({from: userAddress });
     const price = await contract.methods.getSpotPrice(config.daiContract, config.realFundToken).call();
     console.log('spot price', price)
     console.log('Dai new price / Realfund ->', web3Lib.utils.fromWei(price.toString(), 'ether'));
@@ -183,25 +178,28 @@ function App() {
   }, []);
 
   /* If user has loaded a wallet before, load it automatically. */
-  useEffect( async () => {
-    console.log('effect')
-    if (web3Modal.cachedProvider) {
-      loadWeb3Modal();
-    } else {
-      if(provider) {
-        console.log(' provider ')
-        let web3 = new Web3(window.ethereum);
-       // console.log('is connected', web3.isConnected());
-        console.log('address', await web3.eth.getAccounts());  
-        setUserAddress(await web3.eth.getAccounts()[0]);
-  
-        if (userAddress) {
-          const balance = await web3.eth.getBalance(userAddress);
-          setBalance(balance);
+  useEffect( () => {
+    const wrapper = async () =>{
+      if (web3Modal.cachedProvider) {
+        loadWeb3Modal();
+      } else {
+        if(provider) {
+          console.log(' provider ')
+          let web3 = new Web3(window.ethereum);
+         // console.log('is connected', web3.isConnected());
+          console.log('address', await web3.eth.getAccounts());  
+          setUserAddress(await web3.eth.getAccounts()[0]);
+    
+          if (userAddress) {
+            const balance = await web3.eth.getBalance(userAddress);
+            setBalance(balance);
+          }
         }
       }
     }
-  }, [loadWeb3Modal]);
+    wrapper();
+    console.log('effect') 
+  });
 
   parseFloat()
   return (
@@ -245,7 +243,7 @@ function App() {
                   value={tokenBalance}
                   onInput={(e) => { 
                     setTokenBalance(`${e.target.value}`);
-                    setDisplayPrice(parseFloat(userSpotPrice * tokenBalance));
+                    // setDisplayPrice(parseFloat(userSpotPrice * tokenBalance));
                   }}
                   variant="outlined"
                   margin="normal"
@@ -329,7 +327,7 @@ function App() {
                   value={tokenDaiBalance}
                   onInput={(e) => {
                     setTokenDaiBalance(`${e.target.value}`);
-                    setDisplayPrice(parseFloat(userDaiSpotPrice * tokenDaiBalance));
+                    // setDisplayPrice(parseFloat(userDaiSpotPrice * tokenDaiBalance));
                   }}
                   variant="outlined"
                   margin="normal"
@@ -386,10 +384,6 @@ function App() {
   );
 }
 
-export default () => {
- return (
-  <TokenProvider>
-    <App></App>
-  </TokenProvider>
- )
-};
+
+
+export default App;

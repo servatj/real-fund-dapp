@@ -1,7 +1,7 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import Button from '@material-ui/core/Button';
-import { web3Modal, logoutOfWeb3Modal, shortenAddress } from '../utils/web3Modal';
-import { Web3Provider, getDefaultProvider } from "@ethersproject/providers";
+import { web3Modal, logoutOfWeb3Modal } from '../utils/web3Modal';
+import { Web3Provider } from "@ethersproject/providers";
 import Web3 from 'web3';
 import daiToken from '../abis/DaiToken.json';
 import realFundToken from '../abis/RealFundTokenERC20.json';
@@ -53,7 +53,19 @@ const WalletButton = ({ provider, setProvider, setUserAddress, setBalance, setWe
     });
 
     setProvider(new Web3Provider(newProvider));
-  }, []);
+  }, [
+     config.daiContract,
+     config.poolContract, 
+     config.realFundToken, 
+     setBalance, 
+     setDAI, 
+     setDaiSpotPrice, 
+     setProvider, 
+     setRFD, 
+     setSpotPrice, 
+     setUserAddress,
+     setWeb3
+  ]);
   
   const loadLogoutWeb3 = (provider) => {
     console.log('load', provider)
