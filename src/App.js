@@ -321,7 +321,7 @@ function App() {
         <div className={classes.container}>
           <FormControl>
           <Typography component="h1" variant="h5">
-            SWAP DAI to RFID
+            SWAP DAI to RFD
           </Typography>
               <TextField
                   value={tokenDaiBalance}
