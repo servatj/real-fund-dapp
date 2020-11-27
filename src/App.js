@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import Button from '@material-ui/core/Button'
 import './App.css';
 import Web3 from 'web3';
-import { FormControl, TextField } from '@material-ui/core';
+import { FormControl, TextField, InputLabel, Input, FormHelperText } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper'
 import  SearchAppBar from './components/header';
 import { Web3Provider } from "@ethersproject/providers";
@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { abi } from './abis/IBPool.json';
 import daiToken from './abis/DaiToken.json';
 import realFundToken from './abis/RealFundTokenERC20.json';
+import Typography from '@material-ui/core/Typography';
 
 import { TokenProvider, useToken } from './context/TokenContext';
 
@@ -61,11 +62,13 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 const config = {
-  realFundToken: "0x47a91E95716B2C0d9670a3FB98b0A24B84D96f07",
-  daiContract: "0xA5F974438Ff347216D216Da660D647e777142969",
-  poolContract: "0xe6d35F9fD28d4589a3757fe0a45C93616C74015D"
+  realFundToken: "0x65516Eef4dCfd360F8CAE4B10A51CDe25b4aD6E9",
+  daiContract: "0xc4D4A81631978e5096bC60C18Af385a7284EF24C",
+  poolContract: "0x7E67499Bafdc6EdA887461937A1AB16b532f856B"
 
 }
+
+const userWhiteList = [];
 
 function App() {
   const classes = useStyles()
@@ -77,29 +80,40 @@ function App() {
   const [userBalance, setBalance] = useState(1);
   const [userDai, setDAI] = useState(0);
   const [userRFD, setRFD] = useState(0);
-
   const [userSpotPrice, setSpotPrice] = useState(0);
   const [tokenBalance, setTokenBalance] = useState(1);  
   const [tokenBalanceSwap, setTotalBalanceSwap] = useState('');
   const [web3Lib, setWeb3] = useState('');
   const [approved, setApproved] = useState(false);
-  const [displayPrice, setDisplayPrice] = useState(userSpotPrice);
+  const [approvedDai, setApprovedDai] = useState(false);
+  const [tokenDaiBalance, setTokenDaiBalance] = useState(1);  
+  const [userDaiSpotPrice, setDaiSpotPrice] = useState(0);
+  const [whiteListAddress, setWhiteListAddress] = useState('');
+  const [displayPrice, setDisplayPrice] = useState(userDaiSpotPrice);
+  const [displayDaiPrice, setDisplayDaiPrice] = useState(userDaiSpotPrice);
 
 
   
+  const addToWhiteList = async (user) => {
+    console.log('user', user)
+
+    const formatedUser = web3Lib.utils.toChecksumAddress(user);
+    console.log('user', user, formatedUser)
+    userWhiteList.push(user);
+    const realFundErc20Contract = new web3Lib.eth.Contract(realFundToken.abi, config.realFundToken);
+    await realFundErc20Contract.methods.addToWhitelist(formatedUser).send({ from: userAddress });
+    
+    //addToWhiteList(user)
+    
+    
+  // .send({ from: userAddress });
+    console.log(`user ${user} added to the white list`)
+  }
+
   /* Open wallet selection modal. */
   const swap = async ()  => {
     const contract = new web3Lib.eth.Contract(abi, config.poolContract);
-  
 
-    // web3Lib.eth.subscribe('LOG_SWAP', {
-    //   address: config.poolContract,
-    //   topics :['swapExactAmountIn']
-    // }, function(error, result){
-    //   if (!error)
-    //       console.log('log', result);
-    // });
-  
     let priceWithSlippage = userSpotPrice * 105 / 100;
 
     priceWithSlippage = web3Lib.utils.fromWei(priceWithSlippage.toString(), 'ether');
@@ -107,19 +121,27 @@ function App() {
     console.log('Realfund / Dai price->', web3Lib.utils.fromWei(userSpotPrice.toString(), 'ether'));
     console.log('token ', tokenBalance, priceWithSlippage, userSpotPrice,  userSpotPrice * tokenBalance)
 
-    const swapResult = await contract.methods.swapExactAmountIn(config.realFundToken, web3Lib.utils.toWei(`${tokenBalance}`), config.daiContract, web3Lib.utils.toWei('0'), web3Lib.utils.toWei(priceWithSlippage)).send({from: "0x84ACb643A378282145b84FCb371a9e502bffe193"});
-  
-    // console.log('swp', swapResult)
-    // const log = swapResult.logs[0].args;
-
-    // console.log('RealFund tokens that enter into the pool:', web3Lib.utils.fromWei(log.tokenAmountIn.toString(), 'ether'));
-    // console.log('Dai tokens that are removed from the pool:', web3Lib.utils.fromWei(log.tokenAmountOut.toString(), 'ether'));
-
+    const swapResult = await contract.methods.swapExactAmountIn(config.realFundToken, web3Lib.utils.toWei(`${tokenBalance}`), config.daiContract, web3Lib.utils.toWei('0'), web3Lib.utils.toWei(priceWithSlippage)).send({from: userAddress });
     const price = await contract.methods.getSpotPrice(config.daiContract, config.realFundToken).call();
     console.log('spot price', price)
-
     console.log('Realfund / Dai new price->', web3Lib.utils.fromWei(price.toString(), 'ether'));
+    setSpotPrice(price)
+  }
 
+  const swapDai = async ()  => {
+    const contract = new web3Lib.eth.Contract(abi, config.poolContract);
+
+    let priceWithSlippage = userDaiSpotPrice * 105 / 100;
+
+    priceWithSlippage = web3Lib.utils.fromWei(priceWithSlippage.toString(), 'ether');
+
+    console.log('Dai price / Realfund ->', web3Lib.utils.fromWei(userDaiSpotPrice.toString(), 'ether'));
+    console.log('token ', tokenDaiBalance, priceWithSlippage, userDaiSpotPrice,  userDaiSpotPrice * tokenDaiBalance)
+
+    const swapResult = await contract.methods.swapExactAmountIn(config.daiContract, web3Lib.utils.toWei(`${tokenDaiBalance}`), config.realFundToken, web3Lib.utils.toWei('0'), web3Lib.utils.toWei(priceWithSlippage)).send({from: userAddress });
+    const price = await contract.methods.getSpotPrice(config.daiContract, config.realFundToken).call();
+    console.log('spot price', price)
+    console.log('Dai new price / Realfund ->', web3Lib.utils.fromWei(price.toString(), 'ether'));
     setSpotPrice(price)
   }
 
@@ -127,13 +149,15 @@ function App() {
   const approve = async (account) => {
     // real fund 
     const rfdContract = new web3Lib.eth.Contract(realFundToken.abi, config.realFundToken);
-    const transfer = {
-      from: "0x84ACb643A378282145b84FCb371a9e502bffe193",
-      gas: web3Lib.utils.toWei('1000000'),
-      gasPrice: '1000000',
-    }
-    await rfdContract.methods.approve(config.poolContract, web3Lib.utils.toTwosComplement(-1)).send({from: transfer.from});
+    await rfdContract.methods.approve(config.poolContract, web3Lib.utils.toTwosComplement(-1)).send({from: userAddress});
     setApproved(true);
+  }
+
+  const approveDai = async (account) => {
+    // real fund 
+    const rfdContract = new web3Lib.eth.Contract(daiToken.abi, config.daiContract);
+    await rfdContract.methods.approve(config.poolContract, web3Lib.utils.toTwosComplement(-1)).send({from: userAddress});
+    setApprovedDai(true);
   }
 
   /* Open wallet selection modal. */
@@ -150,7 +174,6 @@ function App() {
     
     const rfdContract = new web3.eth.Contract(realFundToken.abi, config.realFundToken);
     setRFD(await rfdContract.methods.balanceOf(currentAddress[0]).call());
-
 
     //const formatAddress = `${currentAddress[0].substring(0, 4 + 2)}...${currentAddress[0].substring(42 - 4)}`
     setProvider(new Web3Provider(newProvider));
@@ -193,16 +216,31 @@ function App() {
         setSpotPrice={setSpotPrice}
         setDAI={setDAI}
         setRFD={setRFD}
+        setTokenDaiBalance={setTokenDaiBalance}
+        setDaiSpotPrice={setDaiSpotPrice}
       />
       {/* {isConnected} */}
       
-    
-
       {!window.ethereum && <h1>Please connect a wallet !</h1>}
       {window.ethereum && <p>Wallet: {shortenAddress(userAddress)} ETH: { Web3.utils.fromWei(`${userBalance}`, "ether") } DAI: { Web3.utils.fromWei(`${userDai}`, "ether") } RFD: { Web3.utils.fromWei(`${userRFD}`, "ether") } , </p>}
+      <FormControl>
+        <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            onClick={(e) => window.open('https://kovan.pools.balancer.exchange/#/pool/0x7E67499Bafdc6EdA887461937A1AB16b532f856B/', '_blank')}
+            className={classes.submit}
+        >
+          visit balancer pool
+        </Button>
+      </FormControl>
       <Paper className={classes.paper} elevation={6}> 
         <div className={classes.container}>
           <FormControl>
+              <Typography component="h1" variant="h5">
+                SWAP RFD to DAI
+              </Typography>
               <TextField
                   value={tokenBalance}
                   onInput={(e) => { 
@@ -253,6 +291,90 @@ function App() {
                   variant="contained"
                   color="primary"
                   onClick={() => swap()}
+                  className={classes.submit}
+                >
+                  Swap
+                </Button>
+          </FormControl> 
+        </div>
+      </Paper>
+
+      <br></br>
+      <br></br>
+      <br></br>
+
+      <FormControl>
+            <InputLabel htmlFor="my-input" >Add user to whitelist</InputLabel>
+            <Input  onInput={(e) => { setWhiteListAddress(`${e.target.value}`) }} id="my-input" aria-describedby="my-helper-text" />
+            <FormHelperText id="my-helper-text">Enter a valid account</FormHelperText>
+            <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={(e) => addToWhiteList(whiteListAddress)}
+                  className={classes.submit}
+                >
+                  Add
+            </Button>
+      </FormControl>
+
+      <Paper className={classes.paper} elevation={6}> 
+        <div className={classes.container}>
+          <FormControl>
+          <Typography component="h1" variant="h5">
+            SWAP DAI to RFID
+          </Typography>
+              <TextField
+                  value={tokenDaiBalance}
+                  onInput={(e) => {
+                    setTokenDaiBalance(`${e.target.value}`);
+                    setDisplayPrice(parseFloat(userDaiSpotPrice * tokenDaiBalance));
+                  }}
+                  variant="outlined"
+                  margin="normal"
+                 // customInput={TextField}
+                  required
+                  fullWidth
+                  id="amountBase"
+                  label='amount'
+                  name="amountBase"
+                  autoComplete="amountBase"
+                  autoFocus
+                />
+                <TextField
+                  className={classes.display}
+                  value={`${Web3.utils.fromWei(userDaiSpotPrice.toString())} DAI`}
+                  disabled={true}
+                  variant="outlined"
+                  margin="normal"
+                  required
+                  fullWidth
+                  name="amountQuote"
+                  id="amountQuote"
+                  InputProps={{
+                    classes: {
+                      input: classes.input,
+                    },
+                  }}
+                />
+                <Button
+                  type="approve"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => approveDai(userAddress)}
+                  className={classes.submit}
+                  disabled={approvedDai}
+                >
+                  Approve
+                </Button>
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  onClick={() => swapDai()}
                   className={classes.submit}
                 >
                   Swap
