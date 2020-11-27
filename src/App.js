@@ -109,7 +109,7 @@ function App() {
   const swap = async ()  => {
     const contract = new web3Lib.eth.Contract(abi, config.poolContract);
 
-    let priceWithSlippage = userSpotPrice * 105 / 100;
+    let priceWithSlippage = userSpotPrice * 140 / 100;
 
     priceWithSlippage = web3Lib.utils.fromWei(priceWithSlippage.toString(), 'ether');
 
@@ -126,7 +126,7 @@ function App() {
   const swapDai = async ()  => {
     const contract = new web3Lib.eth.Contract(abi, config.poolContract);
 
-    let priceWithSlippage = userDaiSpotPrice * 105 / 100;
+    let priceWithSlippage = userDaiSpotPrice * 140 / 100;
 
     priceWithSlippage = web3Lib.utils.fromWei(priceWithSlippage.toString(), 'ether');
 
