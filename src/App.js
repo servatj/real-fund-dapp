@@ -199,7 +199,7 @@ function App() {
     }
     wrapper();
     console.log('effect') 
-  });
+  }, []);
 
   parseFloat()
   return (
