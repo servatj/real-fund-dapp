@@ -1,7 +1,6 @@
 # RealFund Interface
 
-[![Lint](https://github.com/Uniswap/uniswap-interface/workflows/Lint/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions?query=workflow%3ALint)
-[![Tests](https://github.com/Uniswap/uniswap-interface/workflows/Tests/badge.svg)](https://github.com/Uniswap/uniswap-interface/actions?query=workflow%3ATests)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/1bfc98a0-bc1f-403e-8c61-e71334b3585a/deploy-status)](https://app.netlify.com/sites/affectionate-nightingale-a6ae3e/deploys)
 [![Styled With Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
 
 An open source interface for RealFund  for the Crypto plaza Hackathon -- a protocol for decentralized exchange of RFD tokens.
