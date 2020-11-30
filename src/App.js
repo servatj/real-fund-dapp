@@ -63,7 +63,6 @@ const config = {
   realFundToken: "0x65516Eef4dCfd360F8CAE4B10A51CDe25b4aD6E9",
   daiContract: "0xc4D4A81631978e5096bC60C18Af385a7284EF24C",
   poolContract: "0x7E67499Bafdc6EdA887461937A1AB16b532f856B"
-
 }
 
 const userWhiteList = [];
@@ -178,6 +177,7 @@ function App() {
   }, []);
 
   /* If user has loaded a wallet before, load it automatically. */
+  // eslint-disable-next-line 
   useEffect( () => {
     const wrapper = async () =>{
       if (web3Modal.cachedProvider) {
@@ -198,7 +198,7 @@ function App() {
       }
     }
     wrapper();
-    console.log('effect') 
+    // eslint-disable-next-line
   }, []);
 
   parseFloat()
